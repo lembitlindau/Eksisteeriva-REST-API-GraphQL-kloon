@@ -1,0 +1,124 @@
+"""
+Medium Clone GraphQL Schema
+This schema provides the same functionality as the REST API
+"""
+
+scalar DateTime
+
+type User {
+  id: ID!
+  username: String!
+  email: String!
+  bio: String!
+  avatar: String!
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type Article {
+  id: ID!
+  title: String!
+  content: String!
+  authorId: String!
+  author: User
+  createdAt: DateTime!
+  updatedAt: DateTime
+  tags: [Tag!]!
+}
+
+type Tag {
+  id: ID!
+  name: String!
+  description: String!
+  createdAt: DateTime
+  updatedAt: DateTime
+  articles: [Article!]!
+}
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input CreateUserInput {
+  username: String!
+  email: String!
+  password: String!
+  bio: String!
+  avatar: String!
+}
+
+input UpdateUserInput {
+  username: String
+  email: String
+  bio: String
+  avatar: String
+}
+
+input CreateArticleInput {
+  title: String!
+  content: String!
+  tagIds: [ID!]
+}
+
+input UpdateArticleInput {
+  title: String
+  content: String
+  tagIds: [ID!]
+}
+
+input CreateTagInput {
+  name: String!
+  description: String!
+}
+
+input UpdateTagInput {
+  name: String
+  description: String
+}
+
+type Query {
+  # User queries
+  users: [User!]!
+  user(id: ID!): User
+  me: User
+
+  # Article queries
+  articles: [Article!]!
+  article(id: ID!): Article
+  
+  # Tag queries
+  tags: [Tag!]!
+  tag(id: ID!): Tag
+  articleTags(articleId: ID!): [Tag!]!
+}
+
+type Mutation {
+  # Authentication
+  login(input: LoginInput!): AuthPayload!
+  logout: Boolean!
+  
+  # User mutations
+  createUser(input: CreateUserInput!): User!
+  updateUser(id: ID!, input: UpdateUserInput!): User!
+  deleteUser(id: ID!): Boolean!
+  
+  # Article mutations
+  createArticle(input: CreateArticleInput!): Article!
+  updateArticle(id: ID!, input: UpdateArticleInput!): Article!
+  deleteArticle(id: ID!): Boolean!
+  
+  # Tag mutations
+  createTag(input: CreateTagInput!): Tag!
+  updateTag(id: ID!, input: UpdateTagInput!): Tag!
+  deleteTag(id: ID!): Boolean!
+  
+  # Article-Tag associations
+  addTagsToArticle(articleId: ID!, tagIds: [ID!]!): Article!
+  removeTagsFromArticle(articleId: ID!, tagIds: [ID!]!): Article!
+}
